@@ -14,13 +14,15 @@ def index():
 @app.route("/buscar", methods = ["GET","POST"])
 
 def buscar():
-    pokemon = Pokemon(request.form["nome"].lower(),"","",)
+    pokemon = Pokemon(request.form["nome"].lower(),"","","",)
     try:
         res = json.loads(requests.get(f"https://pokeapi.co/api/v2/pokemon/{pokemon.nome}").text)
-        result = res['sprites']
-        result = result['front_shiny']
-        pokemon.foto = result
+        result = res['sprites']['front_default']
+        sprite_shiny = res['sprites']['front_shiny']
 
+        pokemon.foto = result
+        pokemon.shiny = sprite_shiny
+       
         if len (res["types"])==1:
             pokemon.tipo = res["types"][0]["type"]["name"]
         else:
@@ -33,6 +35,7 @@ def buscar():
     nome = pokemon.nome,
     foto = pokemon.foto,
     tipo = pokemon.tipo.upper(),
+    shiny = pokemon.shiny,
 
     )
 
